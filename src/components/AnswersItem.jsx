@@ -1,29 +1,30 @@
-// Components don't need to be separeted into individual files
-// Here we have a smaller component that helps compose the AnswersItem below
+import PropTypes from "prop-types"; // Import PropTypes
 
 const answersSet = {
   swimming: "Swimming",
   bathing: "Bathing",
   chatting: "Chatting",
-  noTime: "I don't like to spend time with it"
+  noTime: "I don't like to spend time with it",
 };
 
 function ItemsList({ list }) {
   return (
     <ul>
       {list.map((item) => (
-        <li>{answersSet[item]}</li>
+        <li key={item}>{answersSet[item]}</li>
       ))}
     </ul>
   );
 }
 
-// This is the main component being exported from this file
-export default function AnswersItem({
-  // Feel free to change this props names to what suits you best
-  // Rememeber here we're destructuring answerItem, which is the prop name that we've passed
-  answerItem: { username, colour, timeSpent, review }
-}) {
+// Define prop types for ItemsList
+ItemsList.propTypes = {
+  list: PropTypes.arrayOf(PropTypes.string).isRequired,
+};
+
+export default function AnswersItem({ answerItem, onEdit }) {
+  const { username, colour, timeSpent, review } = answerItem;
+
   return (
     <li>
       <article className="answer">
@@ -40,7 +41,19 @@ export default function AnswersItem({
           <em>What else have you got to say about your rubber duck?</em>
           <span className="answer__line">{review}</span>
         </p>
+        <button onClick={() => onEdit(answerItem)}>Edit</button> {/* Edit button */}
       </article>
     </li>
   );
 }
+
+// Add prop validation
+AnswersItem.propTypes = {
+  answerItem: PropTypes.shape({
+    username: PropTypes.string,
+    colour: PropTypes.string,
+    timeSpent: PropTypes.arrayOf(PropTypes.string),
+    review: PropTypes.string,
+  }).isRequired,
+  onEdit: PropTypes.func.isRequired,
+};
